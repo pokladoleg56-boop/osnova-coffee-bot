@@ -229,7 +229,7 @@ def webhook():
 
         answer_callback(query["id"])
 
-                if command == "BALANCE":
+    if command == "BALANCE":
             balance = get_balance(telegram_id)
             remaining = REQUIRED_COFFEES - balance
 
