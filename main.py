@@ -188,7 +188,7 @@ def send_barista_add_more_buttons(chat_id, client_id, result):
         ]
     ]
 
-    if balance >= REQUIRED_COFFEES:
+    if balance >= REQUIRED_COFFEES or "Подарочная" in result:
         buttons.append([
             {"text": "🎁 Списать подарок", "callback_data": f"USE_BONUS:{client_id}"}
         ])
