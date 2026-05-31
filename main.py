@@ -177,7 +177,7 @@ def add_coffee_by_bot(client_id, barista_chat_id):
     log_transaction(client_id, name, "+1 кава")
 
     send_message(client_id, client_text)
-    send_message(barista_chat_id, "✅ " + result)
+    send_barista_add_more_buttons(barista_chat_id, client_id, result)
 def send_qr_card(chat_id, telegram_id):
     bot_username = "Osnovabar_bot"
 
@@ -197,6 +197,26 @@ def send_qr_card(chat_id, telegram_id):
         },
         timeout=10,
     )
+def send_barista_add_more_buttons(chat_id, client_id, result):
+    keyboard = {
+        "inline_keyboard": [
+            [
+                {"text": "➕ +1", "callback_data": f"ADD_MORE:{client_id}:1"},
+                {"text": "➕ +2", "callback_data": f"ADD_MORE:{client_id}:2"},
+                {"text": "➕ +3", "callback_data": f"ADD_MORE:{client_id}:3"},
+            ]
+        ]
+    }
+
+    requests.post(
+        f"{TELEGRAM_API}/sendMessage",
+        json={
+            "chat_id": chat_id,
+            "text": "✅ " + result + "\n\nДодати ще каву?",
+            "reply_markup": keyboard,
+        },
+        timeout=10,
+    )
 @app.route("/webhook", methods=["POST"])
 def webhook():
     data = request.get_json(force=True)
@@ -211,6 +231,18 @@ def webhook():
         name = user.get("first_name", "")
 
         answer_callback(query["id"])
+        if command.startswith("ADD_MORE:"):
+            if telegram_id not in BARISTA_IDS:
+                send_message(chat_id, "❌ У вас нет доступа")
+                return "ok"
+
+            _, client_id, count_text = command.split(":")
+            count = int(count_text)
+
+            for _ in range(count):
+                add_coffee_by_bot(client_id, chat_id)
+
+            return "ok"
 
         if command == "BALANCE":
             balance = get_balance(telegram_id)
