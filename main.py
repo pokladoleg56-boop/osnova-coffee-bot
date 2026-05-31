@@ -182,6 +182,46 @@ def add_coffee_by_bot(client_id, barista_chat_id):
 def webhook():
     data = request.get_json(force=True)
 
+    if "callback_query" in data:
+        query = data["callback_query"]
+        command = query["data"]
+        user = query["from"]
+        chat_id = query["message"]["chat"]["id"]
+
+        telegram_id = str(user["id"])
+        name = user.get("first_name", "")
+
+        answer_callback(query["id"])
+
+        if command == "BALANCE":
+            balance = get_balance(telegram_id)
+            remaining = REQUIRED_COFFEES - balance
+            progress = "☕" * balance + "⬜" * remaining
+
+            send_message(
+                chat_id,
+                "☕ Osnova Bar\n\n"
+                f"{progress}\n\n"
+                f"Ваш баланс: {balance}/{REQUIRED_COFFEES}\n"
+                f"До подарунка залишилось: {remaining} кав"
+            )
+
+        elif command == "CARD":
+            send_message(
+                chat_id,
+                "💳 Карта лояльності Osnova Bar\n\n"
+                f"Ваш номер карти:\n{telegram_id}\n\n"
+                "Покажіть цей номер бариста."
+            )
+
+        elif command == "GIFT":
+            send_message(
+                chat_id,
+                "🎁 Збирайте 6 штампів, і 7-а кава буде безкоштовною ☕"
+            )
+
+        return "ok"
+
     if "message" in data:
         message = data["message"]
         text = message.get("text", "")
@@ -217,44 +257,6 @@ def webhook():
             )
         else:
             send_message(chat_id, "Використовуйте кнопки нижче 👇")
-
-        if "callback_query" in data:
-            query = data["callback_query"]
-            command = query["data"]
-            user = query["from"]
-            chat_id = query["message"]["chat"]["id"]
-    
-            telegram_id = str(user["id"])
-            name = user.get("first_name", "")
-    
-            answer_callback(query["id"])
-
-        if command == "BALANCE":
-            balance = get_balance(telegram_id)
-            remaining = REQUIRED_COFFEES - balance
-            progress = "☕" * balance + "⬜" * remaining
-
-            send_message(
-                chat_id,
-                "☕ Osnova Bar\n\n"
-                f"{progress}\n\n"
-                f"Ваш баланс: {balance}/{REQUIRED_COFFEES}\n"
-                f"До подарунка залишилось: {remaining} кав"
-            )
-
-        elif command == "CARD":
-            send_message(
-                chat_id,
-                "💳 Карта лояльності Osnova Bar\n\n"
-                f"Ваш номер карти:\n{telegram_id}\n\n"
-                "Покажіть цей номер бариста."
-            )
-
-        elif command == "GIFT":
-            send_message(
-                chat_id,
-                "🎁 Збирайте 6 штампів, і 7-а кава буде безкоштовною ☕"
-            )
 
     return "ok"
 
