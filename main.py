@@ -219,15 +219,15 @@ def webhook():
             send_message(chat_id, "Використовуйте кнопки нижче 👇")
 
         if "callback_query" in data:
-        query = data["callback_query"]
-        command = query["data"]
-        user = query["from"]
-        chat_id = query["message"]["chat"]["id"]
-
-        telegram_id = str(user["id"])
-        name = user.get("first_name", "")
-
-        answer_callback(query["id"])
+            query = data["callback_query"]
+            command = query["data"]
+            user = query["from"]
+            chat_id = query["message"]["chat"]["id"]
+    
+            telegram_id = str(user["id"])
+            name = user.get("first_name", "")
+    
+            answer_callback(query["id"])
 
         if command == "BALANCE":
             balance = get_balance(telegram_id)
