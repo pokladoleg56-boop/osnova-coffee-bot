@@ -178,24 +178,24 @@ def add_coffee_by_bot(client_id, barista_chat_id):
 
     send_message(client_id, client_text)
     send_message(barista_chat_id, "✅ " + result)
-    def send_qr_card(chat_id, telegram_id):
-        bot_username = "Osnovabar_bot"
+def send_qr_card(chat_id, telegram_id):
+    bot_username = "Osnovabar_bot"
 
-        add_link = f"https://t.me/{bot_username}?start=add_{telegram_id}"
-        qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=" + quote(add_link)
+    add_link = f"https://t.me/{bot_username}?start=add_{telegram_id}"
+    qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=" + quote(add_link)
     
-        requests.post(
-            f"{TELEGRAM_API}/sendPhoto",
-            json={
-                "chat_id": chat_id,
-                "photo": qr_url,
-                "caption": (
-                    "💳 Карта лояльності Osnova Bar\n\n"
-                    f"Ваш номер карти: {telegram_id}\n\n"
-                    "Покажіть цей QR бариста для нарахування кави."
-                )
-            },
-            timeout=10,
+    requests.post(
+        f"{TELEGRAM_API}/sendPhoto",
+        json={
+            "chat_id": chat_id,
+            "photo": qr_url,
+            "caption": (
+                "💳 Карта лояльності Osnova Bar\n\n"
+                f"Ваш номер карти: {telegram_id}\n\n"
+                "Покажіть цей QR бариста для нарахування кави."
+            )
+        },
+        timeout=10,
     )
 @app.route("/webhook", methods=["POST"])
 def webhook():
