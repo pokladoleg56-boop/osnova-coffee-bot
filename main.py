@@ -229,13 +229,17 @@ def webhook():
 
         answer_callback(query["id"])
 
-        if command == "BALANCE":
+                if command == "BALANCE":
             balance = get_balance(telegram_id)
             remaining = REQUIRED_COFFEES - balance
 
+            progress = "☕" * balance + "⬜" * remaining
+
             send_message(
                 chat_id,
-                f"☕ Ваш баланс: {balance}/{REQUIRED_COFFEES}\n"
+                "☕ Osnova Bar\n\n"
+                f"{progress}\n\n"
+                f"Ваш баланс: {balance}/{REQUIRED_COFFEES}\n"
                 f"До подарунка залишилось: {remaining} кав"
             )
 
