@@ -245,6 +245,39 @@ def send_barista_add_more_buttons(chat_id, client_id, result):
         },
         timeout=10,
     )
+def request_phone(chat_id):
+    keyboard = {
+        "keyboard": [
+            [
+                {
+                    "text": "📱 Поділитися номером",
+                    "request_contact": True
+                }
+            ]
+        ],
+        "resize_keyboard": True,
+        "one_time_keyboard": True
+    }
+
+    requests.post(
+        f"{TELEGRAM_API}/sendMessage",
+        json={
+            "chat_id": chat_id,
+            "text": "📱 Поділіться номером телефону, щоб ми могли зберегти вашу карту лояльності.",
+            "reply_markup": keyboard,
+        },
+        timeout=10,
+    )    
+def save_phone(telegram_id, phone):
+    spreadsheet = get_sheet()
+    users_sheet = spreadsheet.worksheet(USERS_SHEET)
+
+    row_index, row = find_user_row(users_sheet, telegram_id)
+
+    if row_index is None:
+        return
+
+    users_sheet.update_cell(row_index, 3, phone)
 @app.route("/webhook", methods=["POST"])
 def webhook():
     data = request.get_json(force=True)
@@ -306,6 +339,20 @@ def webhook():
 
     if "message" in data:
         message = data["message"]
+    if "contact" in message:
+            user = message["from"]
+            chat_id = message["chat"]["id"]
+            telegram_id = str(user["id"])
+            phone = message["contact"].get("phone_number", "")
+
+            save_phone(telegram_id, phone)
+
+            send_message(
+                chat_id,
+                "✅ Дякуємо! Номер телефону збережено."
+            )
+
+            return "ok"
         text = message.get("text", "")
         user = message["from"]
         chat_id = message["chat"]["id"]
@@ -350,6 +397,7 @@ def webhook():
                 "☕ Привіт! Ти у програмі лояльності Osnova Bar.\n\n"
                 "Кожна 7-а кава — безкоштовно 🎁"
             )
+                request_phone(chat_id)
         else:
             send_message(chat_id, "Використовуйте кнопки нижче 👇")
 
