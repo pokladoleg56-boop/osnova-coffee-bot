@@ -397,7 +397,7 @@ def webhook():
                 "☕ Привіт! Ти у програмі лояльності Osnova Bar.\n\n"
                 "Кожна 7-а кава — безкоштовно 🎁"
             )
-                request_phone(chat_id)
+            request_phone(chat_id)
         else:
             send_message(chat_id, "Використовуйте кнопки нижче 👇")
 
