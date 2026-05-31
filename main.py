@@ -28,6 +28,7 @@ def get_sheet():
     "private_key_id": os.environ["GOOGLE_PRIVATE_KEY_ID"],
     "private_key": GOOGLE_PRIVATE_KEY,
     "client_email": GOOGLE_CLIENT_EMAIL,
+    "client_id": os.environ["GOOGLE_CLIENT_ID"],
     "token_uri": "https://oauth2.googleapis.com/token",
 }
 
