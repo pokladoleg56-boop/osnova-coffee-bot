@@ -339,7 +339,7 @@ def webhook():
 
     if "message" in data:
         message = data["message"]
-    if "contact" in message:
+        if "contact" in message:
             user = message["from"]
             chat_id = message["chat"]["id"]
             telegram_id = str(user["id"])
