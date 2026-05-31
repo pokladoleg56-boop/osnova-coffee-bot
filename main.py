@@ -23,12 +23,13 @@ HISTORY_SHEET = "История транзакций"
 
 def get_sheet():
     credentials_dict = {
-        "type": "service_account",
-        "project_id": "osnova-coffee-bot",
-        "private_key": GOOGLE_PRIVATE_KEY,
-        "client_email": GOOGLE_CLIENT_EMAIL,
-        "token_uri": "https://oauth2.googleapis.com/token",
-    }
+    "type": "service_account",
+    "project_id": "osnova-coffee-bot",
+    "private_key_id": os.environ["GOOGLE_PRIVATE_KEY_ID"],
+    "private_key": GOOGLE_PRIVATE_KEY,
+    "client_email": GOOGLE_CLIENT_EMAIL,
+    "token_uri": "https://oauth2.googleapis.com/token",
+}
 
     scope = [
         "https://spreadsheets.google.com/feeds",
