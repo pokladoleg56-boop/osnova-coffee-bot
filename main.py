@@ -259,6 +259,19 @@ def webhook():
             client_id = parts[1].strip()
             add_coffee_by_bot(client_id, chat_id)
             return "ok"
+            if text.startswith("/start add_"):
+                if telegram_id not in BARISTA_IDS:
+                    send_message(chat_id, "❌ У вас нет доступа для начисления кави")
+                    return "ok"
+
+                client_id = text.replace("/start add_", "").strip()
+
+            if not client_id:
+                send_message(chat_id, "❌ Не найден номер карты")
+                return "ok"
+
+            add_coffee_by_bot(client_id, chat_id)
+            return "ok"
 
         if text.startswith("/start"):
             register_user(telegram_id, name)
