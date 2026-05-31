@@ -219,31 +219,31 @@ def webhook():
             send_message(chat_id, "Використовуйте кнопки нижче 👇")
 
     if "callback_query" in data:
-        query = data["callback_query"]
-        command = query["data"]
-        user = query["from"]
-        chat_id = query["message"]["chat"]["id"]
+            query = data["callback_query"]
+            command = query["data"]
+            user = query["from"]
+            chat_id = query["message"]["chat"]["id"]
 
-        telegram_id = str(user["id"])
-        name = user.get("first_name", "")
+            telegram_id = str(user["id"])
+            name = user.get("first_name", "")
 
-        answer_callback(query["id"])
+            answer_callback(query["id"])
 
-    if command == "BALANCE":
-            balance = get_balance(telegram_id)
-            remaining = REQUIRED_COFFEES - balance
+        if command == "BALANCE":
+               balance = get_balance(telegram_id)
+                remaining = REQUIRED_COFFEES - balance
+    
+                progress = "☕" * balance + "⬜" * remaining
+    
+                send_message(
+                    chat_id,
+                    "☕ Osnova Bar\n\n"
+                    f"{progress}\n\n"
+                    f"Ваш баланс: {balance}/{REQUIRED_COFFEES}\n"
+                    f"До подарунка залишилось: {remaining} кав"
+                )
 
-            progress = "☕" * balance + "⬜" * remaining
-
-            send_message(
-                chat_id,
-                "☕ Osnova Bar\n\n"
-                f"{progress}\n\n"
-                f"Ваш баланс: {balance}/{REQUIRED_COFFEES}\n"
-                f"До подарунка залишилось: {remaining} кав"
-            )
-
-        elif command == "CARD":
+         elif command == "CARD":
             send_message(
                 chat_id,
                 "💳 Карта лояльності Osnova Bar\n\n"
