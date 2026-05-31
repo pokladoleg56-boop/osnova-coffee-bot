@@ -226,7 +226,6 @@ def webhook():
             )
 
         elif command == "CARD":
-            s        elif command == "CARD":
             send_qr_card(chat_id, telegram_id)
 
         elif command == "GIFT":
