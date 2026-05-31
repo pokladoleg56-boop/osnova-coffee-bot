@@ -163,7 +163,6 @@ def add_coffee_by_bot(client_id, barista_chat_id):
     balance += 1
 
     if balance >= REQUIRED_COFFEES:
-        balance = 0
         result = "🎉 Подарочная кава доступна!"
         client_text = "🎉 Вітаємо! У вас є безкоштовна кава ☕"
     else:
@@ -177,6 +176,7 @@ def add_coffee_by_bot(client_id, barista_chat_id):
     log_transaction(client_id, name, "+1 кава")
 
     send_message(client_id, client_text)
+    send_barista_add_more_buttons(barista_chat_id, client_id, result)
 def send_barista_add_more_buttons(chat_id, client_id, result):
     balance = get_balance(client_id)
 
