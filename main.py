@@ -142,7 +142,42 @@ def log_transaction(telegram_id, name, action):
 def home():
     return "Osnova Coffee Bot is running!"
 
+BARISTA_IDS = ["128621776"]
 
+def add_coffee_by_bot(client_id, barista_chat_id):
+    spreadsheet = get_sheet()
+    users_sheet = spreadsheet.worksheet(USERS_SHEET)
+
+    row_index, row = find_user_row(users_sheet, client_id)
+
+    if row_index is None:
+        send_message(barista_chat_id, "❌ Клиент не найден")
+        return
+
+    name = row[1] if len(row) > 1 else ""
+    total = int(row[3]) if len(row) > 3 and row[3] else 0
+    balance = int(row[4]) if len(row) > 4 and row[4] else 0
+
+    total += 1
+    balance += 1
+
+    if balance >= REQUIRED_COFFEES:
+        balance = 0
+        result = "🎉 Подарочная кава доступна!"
+        client_text = "🎉 Вітаємо! У вас є безкоштовна кава ☕"
+    else:
+        result = f"Начислено. Баланс: {balance}/{REQUIRED_COFFEES}"
+        client_text = f"☕ +1 кава зарахована!\n\nВаш баланс: {balance}/{REQUIRED_COFFEES}"
+
+    users_sheet.update_cell(row_index, 4, total)
+    users_sheet.update_cell(row_index, 5, balance)
+    users_sheet.update_cell(row_index, 6, datetime.now().strftime("%d.%m.%Y %H:%M:%S"))
+
+    log_transaction(client_id, name, "+1 кава")
+
+    send_message(client_id, client_text)
+    send_message(barista_chat_id, "✅ " + result)
+    
 @app.route("/webhook", methods=["POST"])
 def webhook():
     data = request.get_json(force=True)
@@ -155,6 +190,21 @@ def webhook():
 
         telegram_id = str(user["id"])
         name = user.get("first_name", "")
+
+        if text.startswith("/add"):
+            if telegram_id not in BARISTA_IDS:
+                send_message(chat_id, "❌ У вас нет доступа")
+                return "ok"
+
+            parts = text.split()
+
+            if len(parts) < 2:
+                send_message(chat_id, "Введите так: /add 128621776")
+                return "ok"
+
+            client_id = parts[1].strip()
+            add_coffee_by_bot(client_id, chat_id)
+            return "ok"
 
         if text.startswith("/start"):
             register_user(telegram_id, name)
